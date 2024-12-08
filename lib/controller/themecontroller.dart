@@ -1,12 +1,18 @@
 import 'package:get/get.dart';
-import 'package:forui/forui.dart'; // Supondo que você está usando o ForUI.
+import 'package:mercury/helper/sharedpreferences.dart';
 
 class ThemeController extends GetxController {
-  final _themeData = FThemes.zinc.dark.obs;
+  SharedPrefsHelper helper = Get.find();
+  final isDark = false.obs;
 
-  FThemeData get themeData => _themeData.value;
+  void changeTheme() {
+    isDark.value = !isDark.value;
+    helper.saveBool('isDark', isDark.value);
+  }
 
-  void changeTheme(FThemeData newTheme) {
-    _themeData.value = newTheme;
+  @override
+  void onInit() {
+    super.onInit();
+    isDark.value = helper.getBool('isDark');
   }
 }
