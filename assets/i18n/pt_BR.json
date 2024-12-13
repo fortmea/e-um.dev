@@ -31,5 +31,6 @@
     "submit": "Enviar",
     "password-short": "Senha deve conter pelo menos 8 caracteres.",
     "password-hint": "Uma senha segura",
-    "email-hint": "meu.endereco@email.com"
+    "email-hint": "meu.endereco@email.com",
+    "home": "Início"
 }

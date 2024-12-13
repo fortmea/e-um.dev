@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:forui/forui.dart';
@@ -38,45 +39,47 @@ class _HeaderWidgetState extends State<HeaderWidget>
               followerBuilder: (context, value, child) {
                 return Padding(
                     padding: const EdgeInsets.all(8),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        FButton.icon(
-                            style: FButtonStyle.ghost,
-                            onPress: () {
-                              localeController.changeLocale('pt', 'BR');
-                            },
-                            child: Row(children: [
-                              SvgPicture.asset(
-                                'img/br.svg',
-                                semanticsLabel: 'portuguese'.i18n(),
-                                width: 18,
-                                height: 18,
-                              ),
-                              const SizedBox(
-                                width: 10,
-                              ),
-                              Text("portuguese".i18n())
-                            ])),
-                        FButton.icon(
-                            style: FButtonStyle.ghost,
-                            onPress: () {
-                              localeController.changeLocale('en', 'US');
-                            },
-                            child: Row(children: [
-                              SvgPicture.asset(
-                                'img/us.svg',
-                                semanticsLabel: 'english'.i18n(),
-                                width: 18,
-                                height: 18,
-                              ),
-                              const SizedBox(
-                                width: 10,
-                              ),
-                              Text("english".i18n())
-                            ]))
-                      ],
-                    ));
+                    child: SingleChildScrollView(
+                        scrollDirection: Axis.horizontal,
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            FButton.icon(
+                                style: FButtonStyle.ghost,
+                                onPress: () {
+                                  localeController.changeLocale('pt', 'BR');
+                                },
+                                child: Row(children: [
+                                  SvgPicture.asset(
+                                    '${kIsWeb ? "" : "assets/"}img/br.svg',
+                                    semanticsLabel: 'portuguese'.i18n(),
+                                    width: 18,
+                                    height: 18,
+                                  ),
+                                  const SizedBox(
+                                    width: 10,
+                                  ),
+                                  Text("portuguese".i18n())
+                                ])),
+                            FButton.icon(
+                                style: FButtonStyle.ghost,
+                                onPress: () {
+                                  localeController.changeLocale('en', 'US');
+                                },
+                                child: Row(children: [
+                                  SvgPicture.asset(
+                                    '${kIsWeb ? "" : "assets/"}img/us.svg',
+                                    semanticsLabel: 'english'.i18n(),
+                                    width: 18,
+                                    height: 18,
+                                  ),
+                                  const SizedBox(
+                                    width: 10,
+                                  ),
+                                  Text("english".i18n())
+                                ]))
+                          ],
+                        )));
               },
               target: FButton.icon(
                   onPress: popoverController.toggle,
@@ -94,15 +97,11 @@ class _HeaderWidgetState extends State<HeaderWidget>
               child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text('theme'.i18n()),
-                    const SizedBox(
-                      width: 10,
-                    ),
                     Obx(
                       () {
                         return FIcon(themeController.isDark.value
                             ? FAssets.icons.moonStar
-                            : FAssets.icons.sunDim);
+                            : FAssets.icons.sun);
                       },
                     )
                   ])),
@@ -118,7 +117,9 @@ class _HeaderWidgetState extends State<HeaderWidget>
                       const SizedBox(
                         width: 10,
                       ),
-                      FIcon(FAssets.icons.logIn)
+                      FIcon(controller.isLoggedIn()
+                          ? FAssets.icons.logOut
+                          : FAssets.icons.logIn)
                     ],
                   ),
                 )
@@ -161,7 +162,7 @@ class _HeaderWidgetState extends State<HeaderWidget>
             FButton.icon(
               child: FIcon(FAssets.icons.house),
               onPress: () {
-                context.pushReplacement('/');
+                context.go('/');
               },
             ),
             const SizedBox(

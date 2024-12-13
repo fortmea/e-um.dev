@@ -31,5 +31,6 @@
     "submit": "Submit",
     "password-short": "Password must be at least 8 characters long.",
     "password-hint": "A secure password",
-    "email-hint": "my.cool@email.com"
+    "email-hint": "my.cool@email.com",
+    "home": "Home"
 }

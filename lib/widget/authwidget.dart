@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:forui/forui.dart';
 import 'package:get/get.dart';
 import 'package:localization/localization.dart';
-import 'package:mercury/constant/regex.dart';
 import 'package:mercury/controller/authcontroller.dart';
 
 class AuthWidget extends StatefulWidget {

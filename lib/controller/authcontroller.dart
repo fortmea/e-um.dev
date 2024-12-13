@@ -5,21 +5,36 @@ import 'package:mercury/model/uimessage.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class AuthController extends GetxController {
-  final SupabaseClient _supabase = Supabase.instance.client;
+  final SupabaseClient supabase = Supabase.instance.client;
   var isLoading = false.obs;
   var isLoginFormValid = false.obs;
   var isRegisterFormValid = false.obs;
   var user = Rxn<User>();
   var message = Rxn<UiMessage>();
   final enableSendResetButton = false.obs;
-
+  bool isLoggedIn() => user.value?.id != null;
   @override
   void onInit() {
     super.onInit();
-    user.value = _supabase.auth.currentUser;
-    _supabase.auth.onAuthStateChange.listen((event) {
+    user.value = supabase.auth.currentUser;
+    supabase.auth.onAuthStateChange.listen((event) {
       user.value = event.session?.user;
     });
+    autoCleanMessage();
+  }
+
+  void autoCleanMessage() {
+    message.listen(
+      (p0) {
+        Future.delayed(const Duration(seconds: 2)).then(
+          (value) {
+            isLoginFormValid.value = false;
+            isRegisterFormValid.value = false;
+            message.value = null;
+          },
+        );
+      },
+    );
   }
 
   String? validateEmail(String? email, {bool changeState = false}) {
@@ -47,7 +62,7 @@ class AuthController extends GetxController {
   Future<void> signUp(String email, String password) async {
     try {
       isLoading.value = true;
-      final response = await _supabase.auth.signUp(
+      final response = await supabase.auth.signUp(
         email: email,
         password: password,
       );
@@ -76,7 +91,7 @@ class AuthController extends GetxController {
   Future<void> signIn(String email, String password) async {
     try {
       isLoading.value = true;
-      final response = await _supabase.auth.signInWithPassword(
+      final response = await supabase.auth.signInWithPassword(
         email: email,
         password: password,
       );
@@ -105,7 +120,7 @@ class AuthController extends GetxController {
   Future<void> signOut() async {
     try {
       isLoading.value = true;
-      await _supabase.auth.signOut();
+      await supabase.auth.signOut();
       message.value = UiMessage(
         title: "success".i18n(),
         message: "success-logout-message".i18n(),
@@ -120,12 +135,10 @@ class AuthController extends GetxController {
     }
   }
 
-  bool isLoggedIn() => user.value != null;
-
   Future<void> resetPassword(String email) async {
     try {
       isLoading.value = true;
-      await _supabase.auth.resetPasswordForEmail(email);
+      await supabase.auth.resetPasswordForEmail(email);
 
       message.value = UiMessage(
         title: "success".i18n(),
@@ -139,5 +152,14 @@ class AuthController extends GetxController {
     } finally {
       isLoading.value = false;
     }
+  }
+
+  authEventSubscriber(
+      Function(AuthChangeEvent event, Session? session) eventHandler) {
+    supabase.auth.onAuthStateChange.listen((data) {
+      final AuthChangeEvent event = data.event;
+      final Session? session = data.session;
+      eventHandler(event, session);
+    });
   }
 }

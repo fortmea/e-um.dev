@@ -3,6 +3,7 @@ import 'package:flutter/widgets.dart';
 import 'package:forui/forui.dart';
 import 'package:get/get.dart';
 import 'package:mercury/controller/authcontroller.dart';
+import 'package:mercury/controller/localecontroller.dart';
 import 'package:mercury/util/responsive.dart';
 import 'package:mercury/widget/authwidget.dart';
 import 'package:mercury/widget/header.dart';
@@ -16,32 +17,40 @@ class RegisterPage extends StatefulWidget {
 }
 
 class _RegisterPageState extends State<RegisterPage> {
-  final GlobalKey<FormState> loginFormKey = GlobalKey<FormState>();
-  final GlobalKey<FormState> registerFormKey = GlobalKey<FormState>();
+  GlobalKey<FormState> loginFormKey = GlobalKey<FormState>();
+  GlobalKey<FormState> registerFormKey = GlobalKey<FormState>();
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
   AuthController controller = Get.find<AuthController>();
+  LocaleController localeController = Get.find();
+
   bool register = false;
   bool showPassword = false;
 
   @override
   void initState() {
     super.initState();
+    controller.isLoginFormValid.value = false;
+    controller.isRegisterFormValid.value = false;
+    localeController.currentTitle = getTitle();
   }
 
   @override
   void dispose() {
     emailController.dispose();
     passwordController.dispose();
-
     super.dispose();
+  }
+
+  String getTitle() {
+    return (register ? 'register' : 'login').i18n();
   }
 
   @override
   Widget build(BuildContext context) {
+    localeController.currentTitle = getTitle();
     return FScaffold(
-        header:
-            HeaderWidget(title: register ? 'register'.i18n() : 'login'.i18n()),
+        header: HeaderWidget(title: getTitle()),
         content: Padding(
             padding: EdgeInsets.symmetric(
                 vertical: responsivePadding(MediaQuery.sizeOf(context).height),

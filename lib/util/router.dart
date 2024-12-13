@@ -1,3 +1,4 @@
+import 'package:get/get.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mercury/pages/404.dart';
 import 'package:mercury/pages/home.dart';
@@ -16,8 +17,26 @@ final router = GoRouter(
       GoRoute(
         path: '/note/:noteId',
         builder: (context, state) {
-          return NotePage(postId: state.pathParameters['noteId'] ?? "");
+          return NotePage(noteId: state.pathParameters['noteId'] ?? "");
         },
       ),
       GoRoute(path: '/auth', builder: (context, state) => const RegisterPage()),
     ]);
+
+final getPages = [
+  GetPage(
+    name: '/',
+    page: () => const HomePage(),
+  ),
+  GetPage(
+    name: '/note/:noteId',
+    page: () {
+      final noteId = Get.parameters['noteId'] ?? "";
+      return NotePage(noteId: noteId);
+    },
+  ),
+  GetPage(
+    name: '/auth',
+    page: () => const RegisterPage(),
+  ),
+];

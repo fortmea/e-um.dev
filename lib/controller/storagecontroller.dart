@@ -24,7 +24,7 @@ class StorageController extends GetxController {
   }
 
   Future<void> setValue<T>(String key, T value) async {
-    data[key] = value; // Atualiza o mapa observável
+    data[key] = value; 
     if (value is String) await _prefs.setString(key, value);
     if (value is int) await _prefs.setInt(key, value);
     if (value is double) await _prefs.setDouble(key, value);
