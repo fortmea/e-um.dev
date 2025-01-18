@@ -45,6 +45,8 @@ dependencies:
     sdk: flutter
   flutter_svg: ^2.0.16
   shared_preferences: ^2.3.3
+  flutter_markdown: ^0.7.5
+  markdown_editor_plus: ^0.2.15
 dev_dependencies:
   flutter_test:
     sdk: flutter

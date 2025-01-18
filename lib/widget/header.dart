@@ -41,7 +41,7 @@ class _HeaderWidgetState extends State<HeaderWidget>
                     padding: const EdgeInsets.all(8),
                     child: SingleChildScrollView(
                         scrollDirection: Axis.horizontal,
-                        child: Row(
+                        child: Column(
                           mainAxisSize: MainAxisSize.min,
                           children: [
                             FButton.icon(
@@ -84,10 +84,10 @@ class _HeaderWidgetState extends State<HeaderWidget>
               target: FButton.icon(
                   onPress: popoverController.toggle,
                   child: Row(children: [
-                    Text("language".i18n()),
+                    /* Text("language".i18n()),
                     const SizedBox(
                       width: 10,
-                    ),
+                    ),*/
                     FIcon(FAssets.icons.languages)
                   ]))),
           FButton.icon(

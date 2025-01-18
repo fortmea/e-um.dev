@@ -8,6 +8,7 @@ import 'package:mercury/controller/authcontroller.dart';
 import 'package:mercury/controller/localecontroller.dart';
 import 'package:mercury/controller/overlaycontroller.dart';
 import 'package:mercury/controller/themecontroller.dart';
+import 'package:mercury/helper/functionhelper.dart';
 import 'package:mercury/helper/sharedpreferences.dart';
 import 'package:mercury/util/router.dart';
 import 'package:flutter_web_plugins/url_strategy.dart';
@@ -16,12 +17,16 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:localization/localization.dart';
 
 void main() async {
+  const test = true;
   WidgetsFlutterBinding.ensureInitialized();
   usePathUrlStrategy();
   await Supabase.initialize(
-    url: 'https://tjjlopeifkrzsmzmwjix.supabase.co',
-    anonKey:
-        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRqamxvcGVpZmtyenNtem13aml4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzMzMjMzNzgsImV4cCI6MjA0ODg5OTM3OH0.xwk-KCuRY2z5J5kfJSc5JczhUY0YTrWNCq2Qr3O4mlE',
+    url: test == true
+        ? "http://127.0.0.1:54321"
+        : 'https://tjjlopeifkrzsmzmwjix.supabase.co',
+    anonKey: (test == true
+        ? "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6ImFub24iLCJleHAiOjE5ODM4MTI5OTZ9.CRXP1A7WOeoJeXxjNni43kdQwgnWNReilDMblYTn_I0"
+        : 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRqamxvcGVpZmtyenNtem13aml4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzMzMjMzNzgsImV4cCI6MjA0ODg5OTM3OH0.xwk-KCuRY2z5J5kfJSc5JczhUY0YTrWNCq2Qr3O4mlE'),
   );
   final systemLocale = WidgetsBinding.instance.platformDispatcher.locale;
   Get.put(FThemes.zinc.dark);
@@ -68,6 +73,7 @@ class _MyAppState extends State<MyApp> {
         break;
       case AuthChangeEvent.signedIn:
         print("Signed in");
+        test("test");
         setState(() {
           // appKey = UniqueKey();
         });
