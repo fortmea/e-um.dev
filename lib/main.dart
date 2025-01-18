@@ -1,25 +1,29 @@
+import 'dart:io';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:forui/forui.dart';
 import 'package:get/get.dart';
 import 'package:go_router/go_router.dart';
-import 'package:mercury/controller/authcontroller.dart';
-import 'package:mercury/controller/localecontroller.dart';
-import 'package:mercury/controller/overlaycontroller.dart';
-import 'package:mercury/controller/themecontroller.dart';
-import 'package:mercury/helper/functionhelper.dart';
-import 'package:mercury/helper/sharedpreferences.dart';
-import 'package:mercury/util/router.dart';
+import 'package:eum.dev/controller/authcontroller.dart';
+import 'package:eum.dev/controller/localecontroller.dart';
+import 'package:eum.dev/controller/overlaycontroller.dart';
+import 'package:eum.dev/controller/themecontroller.dart';
+import 'package:eum.dev/helper/functionhelper.dart';
+import 'package:eum.dev/helper/sharedpreferences.dart';
+import 'package:eum.dev/util/router.dart';
 import 'package:flutter_web_plugins/url_strategy.dart';
-import 'package:mercury/widget/animatedwidget.dart';
+import 'package:eum.dev/widget/animatedwidget.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:localization/localization.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 void main() async {
   const test = true;
   WidgetsFlutterBinding.ensureInitialized();
   usePathUrlStrategy();
+  // await dotenv.load(fileName: ".env");
   await Supabase.initialize(
     url: test == true
         ? "http://127.0.0.1:54321"
@@ -47,6 +51,7 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   //Key appKey = UniqueKey();
+
   late final GoRouter routerObj;
   late final LocaleController localeController;
   late final OverlayController overlayController;
@@ -68,21 +73,16 @@ class _MyAppState extends State<MyApp> {
   }
 
   void authEventHandler(AuthChangeEvent event, Session? session) {
+    overlayController.toggleOverlay();
+
     switch (event) {
       case AuthChangeEvent.initialSession:
         break;
       case AuthChangeEvent.signedIn:
-        print("Signed in");
-        test("test");
-        setState(() {
-          // appKey = UniqueKey();
-        });
+        setState(() {});
         routerObj.go('/');
         break;
       case AuthChangeEvent.signedOut:
-        setState(() {
-          // appKey = UniqueKey();
-        });
         routerObj.go('/');
         break;
       case AuthChangeEvent.passwordRecovery:
@@ -101,6 +101,9 @@ class _MyAppState extends State<MyApp> {
         // handle mfa challenge verified
         break;
     }
+    Future.delayed(Duration(milliseconds: 500), () {
+      overlayController.toggleOverlay();
+    });
   }
 
   @override

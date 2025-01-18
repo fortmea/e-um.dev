@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:mercury/controller/overlaycontroller.dart';
+import 'package:eum.dev/controller/overlaycontroller.dart';
 
 class LocaleController extends GetxController {
   final Rx<Locale> _currentLocale;

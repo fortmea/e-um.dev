@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:forui/forui.dart';
 import 'package:get/get.dart';
-import 'package:mercury/util/router.dart';
-import 'package:mercury/widget/editor.dart';
-import 'package:mercury/widget/header.dart';
+import 'package:eum.dev/util/router.dart';
+import 'package:eum.dev/widget/editor.dart';
+import 'package:eum.dev/widget/header.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class NotePage extends StatefulWidget {

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:forui/forui.dart';
 import 'package:localization/localization.dart';
-import 'package:mercury/widget/header.dart';
+import 'package:eum.dev/widget/header.dart';
 
 class NotFoundPage extends StatefulWidget {
   const NotFoundPage({super.key});

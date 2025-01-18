@@ -1,5 +1,5 @@
 import 'package:get/get.dart';
-import 'package:mercury/helper/sharedpreferences.dart';
+import 'package:eum.dev/helper/sharedpreferences.dart';
 
 class ThemeController extends GetxController {
   SharedPrefsHelper helper = Get.find();

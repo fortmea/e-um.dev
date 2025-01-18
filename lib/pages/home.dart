@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:forui/forui.dart';
 import 'package:get/get.dart';
 import 'package:localization/localization.dart';
-import 'package:mercury/controller/localecontroller.dart';
-import 'package:mercury/widget/header.dart';
+import 'package:eum.dev/controller/localecontroller.dart';
+import 'package:eum.dev/widget/header.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});

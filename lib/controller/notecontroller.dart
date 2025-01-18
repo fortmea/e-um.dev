@@ -1,5 +1,5 @@
 import 'package:get/get.dart';
-import 'package:mercury/model/note.dart';
+import 'package:eum.dev/model/note.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class NotesController extends GetxController {

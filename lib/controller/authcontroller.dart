@@ -1,7 +1,7 @@
 import 'package:get/get.dart';
 import 'package:localization/localization.dart';
-import 'package:mercury/constant/regex.dart';
-import 'package:mercury/model/uimessage.dart';
+import 'package:eum.dev/constant/regex.dart';
+import 'package:eum.dev/model/uimessage.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class AuthController extends GetxController {

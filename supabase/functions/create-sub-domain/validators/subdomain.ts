@@ -33,11 +33,9 @@ export async function validateSubDomain(
   } else {
     pointsToValid = pointsTo.match(ipAddressRegExp)?.[0] == pointsTo;
   }
-  console.log(pointsToValid);
-  console.log(pointsTo);
-  console.log(pointsTo.match(ipAddressRegExp));
-  console.log(pointsTo.match(pointsToRegExp));
-
-  return (!profanityFilter.isProfane(name) && data?.length == 0) && !error &&
-    name.match(subdomainRegExp)?.[0] == name && pointsToValid == true;
+  const valid = (!profanityFilter.isProfane(name) && data?.length == 0) &&
+    error == null &&
+    name.match(subdomainRegExp)?.[0] == name.split(".")[0] &&
+    pointsToValid == true;
+  return valid;
 }

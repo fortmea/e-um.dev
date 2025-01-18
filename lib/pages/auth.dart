@@ -1,13 +1,15 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:forui/forui.dart';
 import 'package:get/get.dart';
-import 'package:mercury/controller/authcontroller.dart';
-import 'package:mercury/controller/localecontroller.dart';
-import 'package:mercury/util/responsive.dart';
-import 'package:mercury/widget/authwidget.dart';
-import 'package:mercury/widget/header.dart';
+import 'package:eum.dev/controller/authcontroller.dart';
+import 'package:eum.dev/controller/localecontroller.dart';
+import 'package:eum.dev/util/responsive.dart';
+import 'package:eum.dev/widget/authwidget.dart';
+import 'package:eum.dev/widget/header.dart';
 import 'package:localization/localization.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 class RegisterPage extends StatefulWidget {
   const RegisterPage({super.key});
@@ -61,6 +63,17 @@ class _RegisterPageState extends State<RegisterPage> {
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
+                FButton(
+                    onPress: () {
+                      controller.supabase.auth.signInWithOAuth(
+                        OAuthProvider.github,
+                        authScreenLaunchMode: kIsWeb
+                            ? LaunchMode.platformDefault
+                            : LaunchMode
+                                .externalApplication, // Launch the auth screen in a new webview on mobile.
+                      );
+                    },
+                    label: Text("GIT")),
                 Obx(
                   () {
                     return Column(children: [

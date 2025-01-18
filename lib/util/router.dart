@@ -1,9 +1,9 @@
 import 'package:get/get.dart';
 import 'package:go_router/go_router.dart';
-import 'package:mercury/pages/404.dart';
-import 'package:mercury/pages/home.dart';
-import 'package:mercury/pages/note.dart';
-import 'package:mercury/pages/auth.dart';
+import 'package:eum.dev/pages/404.dart';
+import 'package:eum.dev/pages/home.dart';
+import 'package:eum.dev/pages/note.dart';
+import 'package:eum.dev/pages/auth.dart';
 
 final router = GoRouter(
     errorBuilder: (context, state) {
@@ -14,13 +14,13 @@ final router = GoRouter(
         path: '/',
         builder: (context, state) => const HomePage(),
       ),
-      GoRoute(
+      /*GoRoute(
         path: '/note/:noteId',
         builder: (context, state) {
           return NotePage(noteId: state.pathParameters['noteId'] ?? "");
         },
       ),
-      GoRoute(path: '/auth', builder: (context, state) => const RegisterPage()),
+      GoRoute(path: '/auth', builder: (context, state) => const RegisterPage()),*/
     ]);
 
 final getPages = [
@@ -28,7 +28,7 @@ final getPages = [
     name: '/',
     page: () => const HomePage(),
   ),
-  GetPage(
+  /* GetPage(
     name: '/note/:noteId',
     page: () {
       final noteId = Get.parameters['noteId'] ?? "";
@@ -38,5 +38,5 @@ final getPages = [
   GetPage(
     name: '/auth',
     page: () => const RegisterPage(),
-  ),
+  ),*/
 ];
