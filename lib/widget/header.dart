@@ -1,3 +1,4 @@
+import 'package:eum.dev/widget/githubloginbutton.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -108,89 +109,7 @@ class _HeaderWidgetState extends State<HeaderWidget>
                         },
                       )
                     ])),
-            !controller.isLoggedIn()
-                ? Container(
-                    decoration: BoxDecoration(
-                        border: Border.all(color: githubCollaborationAccent1),
-                        borderRadius:
-                            const BorderRadius.all(Radius.circular(8))),
-                    child: FButton.icon(
-                      style: FButtonStyle.ghost,
-                      onPress: () {
-                        controller.supabase.auth.signInWithOAuth(
-                          OAuthProvider.github,
-                          authScreenLaunchMode: kIsWeb
-                              ? LaunchMode.platformDefault
-                              : LaunchMode
-                                  .externalApplication, // Launch the auth screen in a new webview on mobile.
-                        );
-                      },
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text("auth-button".i18n()),
-                          const SizedBox(
-                            width: 10,
-                          ),
-                          FIcon(controller.isLoggedIn()
-                              ? FAssets.icons.logOut
-                              : FAssets.icons.github)
-                        ],
-                      ),
-                    ))
-                : FButton.icon(
-                    onPress: () {
-                      showAdaptiveDialog(
-                        context: context,
-                        builder: (context) => FDialog(
-                          direction: Axis.horizontal,
-                          title: Text('logout'.i18n()),
-                          body: Text('logout-message'.i18n()),
-                          actions: [
-                            FButton(
-                                style: FButtonStyle.outline,
-                                label: Text('cancel'.i18n()),
-                                onPress: () => Navigator.of(context).pop()),
-                            FButton(
-                                label: Text('continue'.i18n()),
-                                onPress: () {
-                                  controller.signOut();
-                                  Navigator.of(context).pop();
-                                }),
-                          ],
-                        ),
-                      );
-                    },
-                    child: Row(
-                      children: [
-                        FAvatar.raw(
-                          size: 48,
-                          child: Image.network(controller.supabase.auth
-                              .currentUser?.userMetadata?['avatar_url']),
-                        ),
-                        const SizedBox(
-                          width: 10,
-                        ),
-                        Text(controller.user.value!.email!),
-                        const SizedBox(
-                          width: 10,
-                        ),
-                        DecoratedBox(
-                            decoration: BoxDecoration(
-                                color: Colors.white,
-                                border: Border.all(),
-                                borderRadius: const BorderRadius.all(
-                                    Radius.circular(10))),
-                            child: const SizedBox(
-                              width: 4,
-                              height: 25,
-                            )),
-                        const SizedBox(
-                          width: 10,
-                        ),
-                        FIcon(FAssets.icons.logOut)
-                      ],
-                    )),
+            const GithubLoginButton(),
           ],
           title: Row(
             mainAxisAlignment: MainAxisAlignment.start,
@@ -201,13 +120,6 @@ class _HeaderWidgetState extends State<HeaderWidget>
                   context.go('/');
                 },
               ),
-              const SizedBox(
-                width: 10,
-              ),
-              Expanded(
-                  child: !isMobile(MediaQuery.sizeOf(context).width)
-                      ? Text(widget.title)
-                      : Container()),
             ],
           )),
     ]);

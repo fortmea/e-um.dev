@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:eum.dev/controller/recordcontroller.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -10,7 +11,6 @@ import 'package:eum.dev/controller/authcontroller.dart';
 import 'package:eum.dev/controller/localecontroller.dart';
 import 'package:eum.dev/controller/overlaycontroller.dart';
 import 'package:eum.dev/controller/themecontroller.dart';
-import 'package:eum.dev/helper/functionhelper.dart';
 import 'package:eum.dev/helper/sharedpreferences.dart';
 import 'package:eum.dev/util/router.dart';
 import 'package:flutter_web_plugins/url_strategy.dart';
@@ -20,25 +20,21 @@ import 'package:localization/localization.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 void main() async {
-  const test = true;
   WidgetsFlutterBinding.ensureInitialized();
   usePathUrlStrategy();
-  // await dotenv.load(fileName: ".env");
+  await dotenv.load(fileName: "env/env.env");
   await Supabase.initialize(
-    url: test == true
-        ? "http://127.0.0.1:54321"
-        : 'https://tjjlopeifkrzsmzmwjix.supabase.co',
-    anonKey: (test == true
-        ? "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6ImFub24iLCJleHAiOjE5ODM4MTI5OTZ9.CRXP1A7WOeoJeXxjNni43kdQwgnWNReilDMblYTn_I0"
-        : 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRqamxvcGVpZmtyenNtem13aml4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzMzMjMzNzgsImV4cCI6MjA0ODg5OTM3OH0.xwk-KCuRY2z5J5kfJSc5JczhUY0YTrWNCq2Qr3O4mlE'),
+    url: dotenv.env["url"] ?? "",
+    anonKey: (dotenv.env["key"] ?? ""),
   );
+
   final systemLocale = WidgetsBinding.instance.platformDispatcher.locale;
   Get.put(FThemes.zinc.dark);
   Get.put(router);
   Get.put(OverlayController());
+  Get.put(RecordController());
   Get.put(LocaleController(currentLocale: systemLocale.obs));
   Get.put(SharedPrefsHelper());
-
   runApp(const MyApp());
 }
 
@@ -101,7 +97,7 @@ class _MyAppState extends State<MyApp> {
         // handle mfa challenge verified
         break;
     }
-    Future.delayed(Duration(milliseconds: 500), () {
+    Future.delayed(const Duration(milliseconds: 500), () {
       overlayController.toggleOverlay();
     });
   }

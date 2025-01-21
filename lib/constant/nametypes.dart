@@ -1,0 +1,1 @@
+enum Nametypes {CNAME, A}

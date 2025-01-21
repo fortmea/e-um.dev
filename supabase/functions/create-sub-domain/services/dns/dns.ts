@@ -1,10 +1,10 @@
-import { DatabaseRecord, DNSRecord } from "./classes/dns.ts";
+// deno-lint-ignore-file ban-unused-ignore
+import { DNSRecord } from "./classes/dns.ts";
 import { createClient, SupabaseClient } from "jsr:@supabase/supabase-js@2";
 import { corsHeaders } from "../../../shared/cors.ts";
 import { validateSubDomain } from "../../validators/subdomain.ts";
-import { resolveTxt } from "node:dns";
 import { validateCloudflareId } from "../../validators/cloudflareId.ts";
-const CREATE_DOMAIN_ROUTE = new URLPattern({ pathname: "/create-sub-domain/" });
+const CREATE_DOMAIN_ROUTE = new URLPattern({ pathname: "/create-sub-domain" });
 
 // TODO: -> comprar outro domínio?
 async function authenticate(
@@ -34,32 +34,31 @@ async function streamToString(
     result += decoder.decode(value, { stream: true });
   }
 
-  // Decodificar qualquer parte pendente.
   result += decoder.decode();
   return result;
 }
 export async function createDomain(req: Request): Promise<Response> {
-  const url = new URL(req.url);
   if (req.method === "OPTIONS") {
     return new Response("ok", { headers: corsHeaders });
   } else if (
     req.method === "POST" || req.method === "PUT" || req.method === "DELETE"
   ) {
+    const url = new URL(req.url);
     const match = CREATE_DOMAIN_ROUTE.exec({ pathname: url.pathname });
+
     const supabaseClient = createClient(
       Deno.env.get("SUPABASE_URL") ?? "",
       Deno.env.get("SUPABASE_ANON_KEY") ?? "",
     );
 
-    //console.log(req.headers);
     const authHeader = req.headers.get("Authorization")!;
     const token = authHeader.replace("Bearer ", "");
     const json = await req.json();
     const data = await authenticate(supabaseClient, token, json["token"]);
-    const subdomain = (json["sub"] as string).trim();
-    const pointsTo = (json["pointsTo"] as string).trim();
-    const nameType = json["type"] as number;
-    const cloudflareId = (json["cloudflareId"] as string) || "".trim();
+    const subdomain = (json["sub"] as string || "").trim();
+    const pointsTo = (json["pointsTo"] as string || "").trim();
+    const nameType = json["type"] || 0 as number;
+    const cloudflareId = ((json["cloudflareId"] as string) || "").trim();
     const domain = ".e-um.dev.br"; // TODO: If planning to add more domains, this needs to be dynamic
     if (req.method != "DELETE") {
       const isValidSubdomain = await validateSubDomain(
@@ -73,23 +72,37 @@ export async function createDomain(req: Request): Promise<Response> {
           "Subdomain is invalid or already in use, incorrect or invalid name type, or domain points to invalid value (ip or url)",
           {
             status: 400,
+            headers: corsHeaders,
           },
         );
       }
     }
     if (json["token"] == null) {
-      return new Response("Not authenticated", { status: 403 });
+      return new Response("Not authenticated", {
+        status: 403,
+        headers: corsHeaders,
+      });
     }
 
     if (!data || data.data.user?.id == null) {
       return new Response("Malformed authentication credentials", {
+        headers: corsHeaders,
         status: 403,
       });
     }
-    const secrets = await (supabaseClient.from("secrets").select("*"));
+
+    // deno-lint-ignore no-var
+    // deno-lint-ignore no-inner-declarations
+    const tempClient = createClient(
+      Deno.env.get("SUPABASE_URL") ?? "",
+      Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "",
+    );
+    const secrets = await (tempClient.from("secrets").select("*"));
+
     if (secrets.data?.length == 0) {
-      return new Response("Unable to obtain auth keys from database.", {
+      return new Response("Unable to obtain keys from database.", {
         status: 403,
+        headers: corsHeaders,
         statusText: "Unable to obtain keys.",
       });
     }
@@ -109,17 +122,19 @@ export async function createDomain(req: Request): Promise<Response> {
 
     if (error) {
       console.error("Erro na consulta:", error);
-      return new Response("Error verifying domains.", { status: 500 });
-    }
-
-    console.log("Contagem de domínios:", count);
-
-    if ((count ?? 0) >= LIMIT && req.method != "DELETE") {
-      return new Response("Error. You have reached the limit of domains.", {
-        status: 400,
+      return new Response("Error verifying domains.", {
+        status: 500,
+        headers: corsHeaders,
       });
     }
 
+
+    if ((count ?? 0) >= LIMIT && req.method === "POST") {
+      return new Response("Error. You have reached the limit of domains.", {
+        headers: corsHeaders,
+        status: 400,
+      });
+    }
     if (match) {
       const dnsRecord = new DNSRecord({
         comment: JSON.stringify({ "owner": data?.data.user?.id }),
@@ -129,7 +144,7 @@ export async function createDomain(req: Request): Promise<Response> {
         type: nameType == 1 ? "CNAME" : "A",
       });
 
-      console.log(req.method);
+    
       // TODO: Verify if domain is already registered or find a way to register into the database before adding the record in cloudflare, maybe creating a help request channel would be a solution. So that if the domain is inserted in the database, but not in the dns, users can reach for help. Or maybe creating a periodic check for records in cloudflare
       if (req.method === "POST") {
         const resp = await fetch(
@@ -160,13 +175,16 @@ export async function createDomain(req: Request): Promise<Response> {
             },
           );
           if (error) {
-            console.log(error);
             return new Response("Error. Limited by database constraints", {
+              headers: corsHeaders,
               status: 400,
             });
           }
         }
-        return new Response(resp.statusText, { status: resp.status });
+        return new Response(resp.statusText, {
+          status: resp.status,
+          headers: corsHeaders,
+        });
       } else if (req.method === "PUT") {
         if (await validateCloudflareId(cloudflareId, supabaseClient)) {
           await supabaseClient.from("records")
@@ -188,7 +206,10 @@ export async function createDomain(req: Request): Promise<Response> {
               body: JSON.stringify(dnsRecord),
             },
           );
-          return new Response(resp.statusText, { status: resp.status });
+          return new Response(resp.statusText, {
+            status: resp.status,
+            headers: corsHeaders,
+          });
         }
       } else if (req.method === "DELETE") {
         if (await validateCloudflareId(cloudflareId, supabaseClient)) {
@@ -206,22 +227,29 @@ export async function createDomain(req: Request): Promise<Response> {
           const respBody = JSON.parse(
             await streamToString(resp.body || new ReadableStream()),
           );
-          console.log(resp);
-
-          if (respBody.result == null) {
-            return new Response(resp.statusText, { status: resp.status });
-          } else if (respBody.result.id == cloudflareId) {
-            supabaseClient.from("records").delete().eq("id", cloudflareId);
-            return new Response(resp.statusText, { status: resp.status });
-          }
+          if (respBody.result.id == cloudflareId) {
+            await supabaseClient.from("records").delete().eq(
+              "cloudflareId",
+              cloudflareId,
+            );
+            return new Response(resp.statusText, {
+              headers: corsHeaders,
+              status: resp.status,
+            });
+          } else {return new Response(resp.statusText, {
+              headers: corsHeaders,
+              status: resp.status,
+            });}
         }
       }
     }
     return new Response("Error. Record not found or malformed request", {
+      headers: corsHeaders,
       status: 404,
     });
   } else {
     return new Response("Error. Can't serve this request method.", {
+      headers: corsHeaders,
       status: 400,
     });
   }

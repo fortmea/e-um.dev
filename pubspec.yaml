@@ -48,6 +48,7 @@ dependencies:
   flutter_markdown: ^0.7.5
   markdown_editor_plus: ^0.2.15
   flutter_dotenv: ^5.2.1
+  extended_text: ^14.2.0
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -74,6 +75,7 @@ flutter:
   assets:
       - assets/i18n/
       - assets/img/
+      - assets/env/
   #   - images/a_dot_burr.jpeg
   #   - images/a_dot_ham.jpeg
 

@@ -296,11 +296,11 @@ CREATE POLICY "Allow delete own notes" ON "public"."notes" FOR DELETE USING (("a
 
 
 
-CREATE POLICY "Enable api to load secrets only if user is logged" ON "public"."secrets" FOR SELECT TO "authenticated" USING (true);
-
-
-
 CREATE POLICY "Enable insert for authenticated users only" ON "public"."records" FOR INSERT TO "authenticated" WITH CHECK (("auth"."uid"() IS NOT NULL));
+
+
+
+CREATE POLICY "Enable public to load record limit" ON "public"."secrets" FOR SELECT USING (("name" = 'limit'::"text"));
 
 
 
@@ -327,9 +327,19 @@ ALTER TABLE "public"."secrets" ENABLE ROW LEVEL SECURITY;
 ALTER TABLE "public"."status" ENABLE ROW LEVEL SECURITY;
 
 
+CREATE PUBLICATION "realtime_messages_publication_" WITH (publish = 'insert, update, delete, truncate');
+
+
+ALTER PUBLICATION "realtime_messages_publication_" OWNER TO "supabase_admin";
+
+
 
 
 ALTER PUBLICATION "supabase_realtime" OWNER TO "postgres";
+
+
+ALTER PUBLICATION "supabase_realtime" ADD TABLE ONLY "public"."records";
+
 
 
 

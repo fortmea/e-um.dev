@@ -5,6 +5,7 @@ import 'package:eum.dev/controller/overlaycontroller.dart';
 class LocaleController extends GetxController {
   final Rx<Locale> _currentLocale;
   final Rx<String> _title = ''.obs;
+  final Rx<int> index = 0.obs;
   LocaleController({required Rx<Locale> currentLocale})
       : _currentLocale = currentLocale;
   String get currentTitle => _title.value;

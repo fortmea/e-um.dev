@@ -1,3 +1,7 @@
+import 'package:eum.dev/controller/authcontroller.dart';
+import 'package:eum.dev/util/responsive.dart';
+import 'package:eum.dev/widget/recordmanagerwidget.dart';
+import 'package:eum.dev/widget/welcomewidget.dart';
 import 'package:flutter/material.dart';
 import 'package:forui/forui.dart';
 import 'package:get/get.dart';
@@ -14,7 +18,7 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   LocaleController localeController = Get.find();
-
+  AuthController authController = Get.find();
   @override
   void initState() {
     super.initState();
@@ -24,9 +28,45 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return FScaffold(
-        header: HeaderWidget(title: "home".i18n()),
-        content: Column(
-          children: [Text("Teste")],
-        ));
+      header: HeaderWidget(title: "".i18n()),
+      footer: Obx(() => FBottomNavigationBar(
+              onChange: (int value) {
+                localeController.index.value = value;
+              },
+              index: localeController.index.value,
+              children: [
+                FBottomNavigationBarItem(
+                  icon: FIcon(FAssets.icons.list),
+                  label: Text('home'.i18n()),
+                ),
+                FBottomNavigationBarItem(
+                  icon: FIcon(FAssets.icons.messageCircleQuestion),
+                  label: Text('questions-answers'.i18n()),
+                ),
+                FBottomNavigationBarItem(
+                  icon: FIcon(FAssets.icons.circleHelp),
+                  label: Text('about-contact'.i18n()),
+                ),
+              ])),
+      content: Obx(
+        () {
+          switch (localeController.index.value) {
+            case 0:
+              return Padding(
+                  padding: EdgeInsets.symmetric(
+                      vertical:
+                          responsivePadding(MediaQuery.sizeOf(context).height),
+                      horizontal:
+                          responsivePadding(MediaQuery.sizeOf(context).width)),
+                  child: SingleChildScrollView(
+                      child: Obx(() => authController.user.value == null
+                          ? WelcomeWidget()
+                          : RecordManagerWidget(formKey: GlobalKey()))));
+            default:
+              return const Text("how?");
+          }
+        },
+      ),
+    );
   }
 }

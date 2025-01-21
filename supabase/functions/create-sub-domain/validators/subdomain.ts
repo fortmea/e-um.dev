@@ -1,5 +1,6 @@
 import { SupabaseClient } from "jsr:@supabase/supabase-js@2";
 import { Filter } from "npm:bad-words";
+import { reservedDomains } from "./reserved.ts";
 const subdomainRegExp = new RegExp(
   "[A-Za-z0-9](?:[A-Za-z0-9\-]{0,61}[A-Za-z0-9])?",
 );
@@ -18,7 +19,12 @@ export async function validateSubDomain(
   supabaseClient: SupabaseClient,
   type: number,
 ): Promise<boolean> {
+  const subdomain = name.split(".e-um.dev.br")[0];
   const profanityFilter = new Filter();
+  reservedDomains.forEach((value) => {
+    profanityFilter.addWords(value);
+  });
+
   const { data, error } = await supabaseClient.from(
     "records",
   ).select(
@@ -33,7 +39,8 @@ export async function validateSubDomain(
   } else {
     pointsToValid = pointsTo.match(ipAddressRegExp)?.[0] == pointsTo;
   }
-  const valid = (!profanityFilter.isProfane(name) && data?.length == 0) &&
+
+  const valid = (!profanityFilter.isProfane(subdomain) && data?.length == 0) &&
     error == null &&
     name.match(subdomainRegExp)?.[0] == name.split(".")[0] &&
     pointsToValid == true;
