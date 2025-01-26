@@ -135,6 +135,27 @@ class AuthController extends GetxController {
     }
   }
 
+  deleteAccount() {
+    supabase.functions
+        .invoke("delete-user-data",
+            headers: {
+              'Authorization':
+                  'Bearer ${supabase.auth.currentSession?.accessToken}'
+            },
+            body: {
+              "refreshToken": supabase.auth.currentSession?.refreshToken,
+            },
+            method: HttpMethod.delete)
+        .then((FunctionResponse resp) {
+      print(resp.data);
+      if (resp.status == 200) {
+        supabase.auth.signOut();
+      }
+    }).catchError((er) {
+      print(er);
+    });
+  }
+
   Future<void> resetPassword(String email) async {
     try {
       isLoading.value = true;

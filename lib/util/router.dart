@@ -19,8 +19,8 @@ final router = GoRouter(
         builder: (context, state) {
           return NotePage(noteId: state.pathParameters['noteId'] ?? "");
         },
-      ),
-      GoRoute(path: '/auth', builder: (context, state) => const RegisterPage()),*/
+      ),*/
+      GoRoute(path: '/auth', builder: (context, state) => const RegisterPage()),
     ]);
 
 final getPages = [
@@ -34,9 +34,9 @@ final getPages = [
       final noteId = Get.parameters['noteId'] ?? "";
       return NotePage(noteId: noteId);
     },
-  ),
+  ),*/
   GetPage(
     name: '/auth',
     page: () => const RegisterPage(),
-  ),*/
+  ),
 ];

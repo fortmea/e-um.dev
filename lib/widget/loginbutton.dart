@@ -9,14 +9,14 @@ import 'package:get/get.dart';
 import 'package:localization/localization.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
-class GithubLoginButton extends StatefulWidget {
-  const GithubLoginButton({super.key});
+class LoginButton extends StatefulWidget {
+  const LoginButton({super.key});
 
   @override
-  State<GithubLoginButton> createState() => _GithubLoginButtonState();
+  State<LoginButton> createState() => _LoginButtonState();
 }
 
-class _GithubLoginButtonState extends State<GithubLoginButton> {
+class _LoginButtonState extends State<LoginButton> {
   final AuthController controller = Get.find();
   final ThemeController themeController = Get.find();
   @override
@@ -93,7 +93,7 @@ class _GithubLoginButtonState extends State<GithubLoginButton> {
                   width: 10,
                 ),
                 !isMobile(context.width)
-                    ? Text(controller.user.value!.email!)
+                    ? Text(controller.user.value?.userMetadata?['preferred_username'])
                     : Container(),
                 !isMobile(context.width)
                     ? const SizedBox(

@@ -1,42 +1,17 @@
 // deno-lint-ignore-file ban-unused-ignore
 import { DNSRecord } from "./classes/dns.ts";
-import { createClient, SupabaseClient } from "jsr:@supabase/supabase-js@2";
+import { createClient } from "jsr:@supabase/supabase-js@2";
 import { corsHeaders } from "../../../shared/cors.ts";
-import { validateSubDomain } from "../../validators/subdomain.ts";
-import { validateCloudflareId } from "../../validators/cloudflareId.ts";
+import { validateSubDomain } from "../../../shared/validators/subdomain.ts";
+import { validateCloudflareId } from "../../../shared/validators/cloudflareId.ts";
+import { authenticate } from "../../../shared/util/auth.ts";
+import { deleteDomain } from "../../../shared/functions/delete.ts";
+import { streamToString } from "../../../shared/functions/string.ts";
+
 const CREATE_DOMAIN_ROUTE = new URLPattern({ pathname: "/create-sub-domain" });
 
 // TODO: -> comprar outro domínio?
-async function authenticate(
-  supabaseClient: SupabaseClient,
-  token: string,
-  refresh_token: string,
-) {
-  try {
-    return await supabaseClient.auth.setSession({
-      access_token: token,
-      refresh_token: refresh_token,
-    });
-  } catch (e) {
-    console.log(e);
-  }
-}
-async function streamToString(
-  stream: ReadableStream<Uint8Array>,
-): Promise<string> {
-  const reader = stream.getReader();
-  const decoder = new TextDecoder();
-  let result = "";
 
-  while (true) {
-    const { done, value } = await reader.read();
-    if (done) break;
-    result += decoder.decode(value, { stream: true });
-  }
-
-  result += decoder.decode();
-  return result;
-}
 export async function createDomain(req: Request): Promise<Response> {
   if (req.method === "OPTIONS") {
     return new Response("ok", { headers: corsHeaders });
@@ -49,12 +24,28 @@ export async function createDomain(req: Request): Promise<Response> {
     const supabaseClient = createClient(
       Deno.env.get("SUPABASE_URL") ?? "",
       Deno.env.get("SUPABASE_ANON_KEY") ?? "",
+      {
+        global: {
+          // Desabilita qualquer dependência no ambiente do navegador
+          fetch: fetch, // Usa o fetch do runtime (Deno ou outro)
+        },
+        auth: {
+          autoRefreshToken: false,
+          persistSession: false,
+          detectSessionInUrl: false,
+        },
+      },
     );
 
     const authHeader = req.headers.get("Authorization")!;
     const token = authHeader.replace("Bearer ", "");
     const json = await req.json();
-    const data = await authenticate(supabaseClient, token, json["token"]);
+    const data = await authenticate(supabaseClient, token, json["token"]).catch(
+      (error) => {
+        console.log(error);
+        return new Response();
+      },
+    );
     const subdomain = (json["sub"] as string || "").trim();
     const pointsTo = (json["pointsTo"] as string || "").trim();
     const nameType = json["type"] || 0 as number;
@@ -96,6 +87,17 @@ export async function createDomain(req: Request): Promise<Response> {
     const tempClient = createClient(
       Deno.env.get("SUPABASE_URL") ?? "",
       Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "",
+      {
+        global: {
+          // Desabilita qualquer dependência no ambiente do navegador
+          fetch: fetch, // Usa o fetch do runtime (Deno ou outro)
+        },
+        auth: {
+          autoRefreshToken: false,
+          persistSession: false,
+          detectSessionInUrl: false,
+        },
+      },
     );
     const secrets = await (tempClient.from("secrets").select("*"));
 
@@ -128,7 +130,6 @@ export async function createDomain(req: Request): Promise<Response> {
       });
     }
 
-
     if ((count ?? 0) >= LIMIT && req.method === "POST") {
       return new Response("Error. You have reached the limit of domains.", {
         headers: corsHeaders,
@@ -143,8 +144,6 @@ export async function createDomain(req: Request): Promise<Response> {
         proxied: json["proxied"] || false,
         type: nameType == 1 ? "CNAME" : "A",
       });
-
-    
       // TODO: Verify if domain is already registered or find a way to register into the database before adding the record in cloudflare, maybe creating a help request channel would be a solution. So that if the domain is inserted in the database, but not in the dns, users can reach for help. Or maybe creating a periodic check for records in cloudflare
       if (req.method === "POST") {
         const resp = await fetch(
@@ -212,35 +211,14 @@ export async function createDomain(req: Request): Promise<Response> {
           });
         }
       } else if (req.method === "DELETE") {
-        if (await validateCloudflareId(cloudflareId, supabaseClient)) {
-          const resp = await fetch(
-            `https://api.cloudflare.com/client/v4/zones/${ZONE_ID}/dns_records/${cloudflareId}`,
-            {
-              method: "DELETE",
-              headers: {
-                "Content-Type": "application/json",
-                "X-Auth-Email": AUTH_EMAIL,
-                "X-Auth-Key": AUTH_KEY,
-              },
-            },
-          );
-          const respBody = JSON.parse(
-            await streamToString(resp.body || new ReadableStream()),
-          );
-          if (respBody.result.id == cloudflareId) {
-            await supabaseClient.from("records").delete().eq(
-              "cloudflareId",
-              cloudflareId,
-            );
-            return new Response(resp.statusText, {
-              headers: corsHeaders,
-              status: resp.status,
-            });
-          } else {return new Response(resp.statusText, {
-              headers: corsHeaders,
-              status: resp.status,
-            });}
-        }
+        console.log(supabaseClient);
+        deleteDomain(
+          cloudflareId,
+          supabaseClient,
+          AUTH_EMAIL,
+          AUTH_KEY,
+          ZONE_ID,
+        );
       }
     }
     return new Response("Error. Record not found or malformed request", {

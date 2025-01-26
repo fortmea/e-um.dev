@@ -47,3 +47,6 @@ deno.lock
 *.env
 
 *.secret
+
+/.vscode
+/.snaplet

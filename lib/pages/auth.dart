@@ -52,7 +52,7 @@ class _RegisterPageState extends State<RegisterPage> {
   Widget build(BuildContext context) {
     localeController.currentTitle = getTitle();
     return FScaffold(
-        header: HeaderWidget(title: getTitle()),
+        //header: HeaderWidget(title: getTitle()),
         content: Padding(
             padding: EdgeInsets.symmetric(
                 vertical: responsivePadding(MediaQuery.sizeOf(context).height),
@@ -63,6 +63,12 @@ class _RegisterPageState extends State<RegisterPage> {
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
+                FButton(
+                  onPress: () {
+                    controller.deleteAccount();
+                  },
+                  label: const Text("Apagar conta"),
+                ),
                 FButton(
                     onPress: () {
                       controller.supabase.auth.signInWithOAuth(

@@ -1,4 +1,4 @@
-import 'package:eum.dev/widget/githubloginbutton.dart';
+import 'package:eum.dev/widget/loginbutton.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -103,13 +103,13 @@ class _HeaderWidgetState extends State<HeaderWidget>
                     children: [
                       Obx(
                         () {
-                          return FIcon(themeController.isDark.value
+                          return FIcon(!themeController.isDark.value
                               ? FAssets.icons.moonStar
                               : FAssets.icons.sun);
                         },
                       )
                     ])),
-            const GithubLoginButton(),
+            const LoginButton(),
           ],
           title: Row(
             mainAxisAlignment: MainAxisAlignment.start,

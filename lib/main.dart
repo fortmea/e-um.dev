@@ -70,12 +70,12 @@ class _MyAppState extends State<MyApp> {
 
   void authEventHandler(AuthChangeEvent event, Session? session) {
     overlayController.toggleOverlay();
-
+    print("LOL");
+    print("Evento $event" );
     switch (event) {
       case AuthChangeEvent.initialSession:
         break;
       case AuthChangeEvent.signedIn:
-        setState(() {});
         routerObj.go('/');
         break;
       case AuthChangeEvent.signedOut:
@@ -88,10 +88,10 @@ class _MyAppState extends State<MyApp> {
         // handle token refreshed
         break;
       case AuthChangeEvent.userUpdated:
-        // handle user updated
+        print("Usuário atualizado");
         break;
       case AuthChangeEvent.userDeleted:
-        // handle user deleted
+        print("Usuário apagado");
         break;
       case AuthChangeEvent.mfaChallengeVerified:
         // handle mfa challenge verified

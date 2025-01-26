@@ -27,78 +27,84 @@ class _RecordManagerWidgetState extends State<RecordManagerWidget>
     return SingleChildScrollView(
         physics: const NeverScrollableScrollPhysics(),
         child: Column(children: [
-          Obx(() {
-            return controller.domainCount > 0
-                ? Column(children: [
-                    Obx(() => Text("registered-domains".i18n([
-                          controller.domainCount.toString(),
-                          controller.domainLimit.toString()
-                        ]))),
-                    const SizedBox(
-                      height: 8,
-                    ),
-                    Obx(() => ListView.separated(
-                          separatorBuilder: (context, index) {
-                            return const SizedBox(
-                              height: 16,
-                            );
-                          },
-                          shrinkWrap: true,
-                          physics: const NeverScrollableScrollPhysics(),
-                          itemCount: controller.domainCount.value,
-                          itemBuilder: (context, index) {
-                            return Obx(() => FTile(
-                                suffixIcon: FButton.icon(
-                                    onPress: () {
-                                      showAdaptiveDialog(
-                                        context: context,
-                                        builder: (context) => FDialog(
-                                          direction: Axis.horizontal,
-                                          title: Text('delete'.i18n()),
-                                          body: Text('delete-message'.i18n()),
-                                          actions: [
-                                            FButton(
-                                                style: FButtonStyle.outline,
-                                                label: Text('cancel'.i18n()),
-                                                onPress: () =>
-                                                    Navigator.of(context)
-                                                        .pop()),
-                                            FButton(
-                                                label: Text('continue'.i18n()),
-                                                onPress: () {
-                                                  controller.deleteDomain(
-                                                      controller.domainsList
-                                                          .value[index]);
-                                                  Navigator.of(context).pop();
-                                                }),
-                                          ],
-                                        ),
-                                      );
-                                    },
-                                    child: Row(
-                                        mainAxisSize: MainAxisSize.min,
-                                        children: [
-                                          Text("delete".i18n()),
-                                          const SizedBox(
-                                            width: 4,
-                                          ),
-                                          FIcon(
-                                            FAssets.icons.trash,
-                                            size: 16,
-                                          ),
-                                        ])),
-                                title: Row(children: [
-                                  Text(
-                                      controller.domainsList.value[index].name),
-                                  FIcon(FAssets.icons.arrowRight),
-                                  Text(controller
-                                      .domainsList.value[index].target),
-                                ])));
-                          },
-                        ))
-                  ])
-                : Text("no-domain-registered".i18n());
-          }),
+          FAccordion(items: [
+            FAccordionItem(
+                title: Obx(() => Text("registered-domains".i18n([
+                      controller.domainCount.toString(),
+                      controller.domainLimit.toString()
+                    ]))),
+                child: Obx(() {
+                  return controller.domainCount > 0
+                      ? Column(children: [
+                          Obx(() => ListView.separated(
+                                separatorBuilder: (context, index) {
+                                  return const SizedBox(
+                                    height: 16,
+                                  );
+                                },
+                                shrinkWrap: true,
+                                physics: const NeverScrollableScrollPhysics(),
+                                itemCount: controller.domainCount.value,
+                                itemBuilder: (context, index) {
+                                  return Obx(() => FTile(
+                                      suffixIcon: FButton.icon(
+                                          onPress: () {
+                                            showAdaptiveDialog(
+                                              context: context,
+                                              builder: (context) => FDialog(
+                                                direction: Axis.horizontal,
+                                                title: Text('delete'.i18n()),
+                                                body: Text(
+                                                    'delete-message'.i18n()),
+                                                actions: [
+                                                  FButton(
+                                                      style:
+                                                          FButtonStyle.outline,
+                                                      label:
+                                                          Text('cancel'.i18n()),
+                                                      onPress: () =>
+                                                          Navigator.of(context)
+                                                              .pop()),
+                                                  FButton(
+                                                      label: Text(
+                                                          'continue'.i18n()),
+                                                      onPress: () {
+                                                        controller.deleteDomain(
+                                                            controller
+                                                                .domainsList
+                                                                .value[index]);
+                                                        Navigator.of(context)
+                                                            .pop();
+                                                      }),
+                                                ],
+                                              ),
+                                            );
+                                          },
+                                          child: Row(
+                                              mainAxisSize: MainAxisSize.min,
+                                              children: [
+                                                Text("delete".i18n()),
+                                                const SizedBox(
+                                                  width: 4,
+                                                ),
+                                                FIcon(
+                                                  FAssets.icons.trash,
+                                                  size: 16,
+                                                ),
+                                              ])),
+                                      title: Row(children: [
+                                        Text(controller
+                                            .domainsList.value[index].name),
+                                        FIcon(FAssets.icons.arrowRight),
+                                        Text(controller
+                                            .domainsList.value[index].target),
+                                      ])));
+                                },
+                              ))
+                        ])
+                      : Text("no-domain-registered".i18n());
+                }))
+          ]),
           const FDivider(),
           FCard(
               title: Text("register-domain".i18n()),
@@ -137,9 +143,24 @@ class _RecordManagerWidgetState extends State<RecordManagerWidget>
                           ]);
                         },
                       ),
-                      FTextField(
+                      Obx(() => FTextField(
                           label: Text("subdomain".i18n()),
                           hint: "subdomain-hint".i18n(),
+                          style: themeController
+                              .currentTheme()
+                              .textFieldStyle
+                              .copyWith(
+                                  enabledStyle: themeController
+                                      .currentTheme()
+                                      .textFieldStyle
+                                      .enabledStyle
+                                      .copyWith(
+                                          contentTextStyle: themeController
+                                              .currentTheme()
+                                              .textFieldStyle
+                                              .enabledStyle
+                                              .contentTextStyle
+                                              .copyWith(fontSize: 20))),
                           controller: controller.subdomainController,
                           autovalidateMode: AutovalidateMode.onUserInteraction,
                           validator: (value) =>
@@ -151,7 +172,7 @@ class _RecordManagerWidgetState extends State<RecordManagerWidget>
                                     .copyWith(
                                         decoration: const BoxDecoration()),
                                 title: const Text(".e-um.dev.br"),
-                              ))),
+                              )))),
                       const SizedBox(
                         height: 10,
                       ),
@@ -221,7 +242,7 @@ class _RecordManagerWidgetState extends State<RecordManagerWidget>
                                     width: 4,
                                   ),
                                   FIcon(
-                                    FAssets.icons.send,
+                                    FAssets.icons.circlePlus,
                                     size: 16,
                                   ),
                                 ],

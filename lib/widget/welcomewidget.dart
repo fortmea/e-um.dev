@@ -1,7 +1,7 @@
 import 'package:eum.dev/constant/regex.dart';
 import 'package:eum.dev/controller/recordcontroller.dart';
 import 'package:eum.dev/util/responsive.dart';
-import 'package:eum.dev/widget/githubloginbutton.dart';
+import 'package:eum.dev/widget/loginbutton.dart';
 import 'package:eum.dev/widget/outlinetextwidget.dart';
 import 'package:extended_text/extended_text.dart';
 import 'package:flutter/material.dart';
@@ -36,11 +36,21 @@ class _WelcomeWidgetState extends State<WelcomeWidget>
   Widget build(BuildContext context) {
     final mobile = isMobile(context.width);
     return Column(mainAxisSize: MainAxisSize.min, children: [
-      Text(
-        "free-domains".i18n(),
-        style: TextStyle(fontSize: mobile ? 30 : 60),
+      Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
+        Expanded(
+            child: Wrap(
+          children: [
+            Text(
+              textAlign: TextAlign.start,
+              "free-domains".i18n(),
+              style: TextStyle(fontSize: mobile ? 30 : 60),
+            ),
+          ],
+        ))
+      ]),
+      const SizedBox(
+        height: 16,
       ),
-      const SizedBox(height: 16,),
       (Obx(() {
         return controller.servedDomains.value > 0
             ? Builder(
@@ -92,7 +102,7 @@ class _WelcomeWidgetState extends State<WelcomeWidget>
           ),
           const SizedBox(
             width: 200,
-            child: GithubLoginButton(),
+            child: LoginButton(),
           )
         ]))
       ]),
