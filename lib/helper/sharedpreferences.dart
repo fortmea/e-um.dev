@@ -32,6 +32,6 @@ class SharedPrefsHelper {
   }
 
   SharedPrefsHelper() {
-    init();
+    // init();
   }
 }

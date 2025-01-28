@@ -68,28 +68,30 @@ class FaqWidget extends StatelessWidget {
                   height: 8,
                 ),
                 FButton(
-                  onPress: () {
-                    showAdaptiveDialog(
-                      context: context,
-                      builder: (context) => FDialog(
-                        direction: Axis.horizontal,
-                        title: Text('delete-account'.i18n()),
-                        body: Text('delete-account-message'.i18n()),
-                        actions: [
-                          FButton(
-                              style: FButtonStyle.outline,
-                              label: Text('cancel'.i18n()),
-                              onPress: () => Navigator.of(context).pop()),
-                          FButton(
-                              label: Text('continue'.i18n()),
-                              onPress: () {
-                                authController.deleteAccount();
-                                Navigator.of(context).pop();
-                              }),
-                        ],
-                      ),
-                    );
-                  },
+                  onPress: authController.isLoggedIn()
+                      ? () {
+                          showAdaptiveDialog(
+                            context: context,
+                            builder: (context) => FDialog(
+                              direction: Axis.horizontal,
+                              title: Text('delete-account'.i18n()),
+                              body: Text('delete-account-message'.i18n()),
+                              actions: [
+                                FButton(
+                                    style: FButtonStyle.outline,
+                                    label: Text('cancel'.i18n()),
+                                    onPress: () => Navigator.of(context).pop()),
+                                FButton(
+                                    label: Text('continue'.i18n()),
+                                    onPress: () {
+                                      authController.deleteAccount();
+                                      Navigator.of(context).pop();
+                                    }),
+                              ],
+                            ),
+                          );
+                        }
+                      : () {},
                   label: Text("delete-account".i18n()),
                 )
               ])),

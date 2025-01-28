@@ -27,7 +27,6 @@ class RecordController extends GetxController {
       targetController = TextEditingController(),
       selectorController = FRadioSelectGroupController(value: Nametypes.CNAME);
 
-
   @override
   void onInit() {
     super.onInit();

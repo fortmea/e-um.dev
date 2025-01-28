@@ -55,7 +55,7 @@ class _HeaderWidgetState extends State<HeaderWidget>
                                   },
                                   child: Row(children: [
                                     SvgPicture.asset(
-                                      '${kIsWeb ? "" : "assets/"}img/br.svg',
+                                      '${kIsWeb ? kDebugMode ? "" : "assets/" : "assets/assets/"}img/br.svg',
                                       semanticsLabel: 'portuguese'.i18n(),
                                       width: 18,
                                       height: 18,
@@ -72,7 +72,7 @@ class _HeaderWidgetState extends State<HeaderWidget>
                                   },
                                   child: Row(children: [
                                     SvgPicture.asset(
-                                      '${kIsWeb ? "" : "assets/"}img/us.svg',
+                                      '${kIsWeb ? kDebugMode ? "" : "assets/" : "assets/assets/"}img/us.svg',
                                       semanticsLabel: 'english'.i18n(),
                                       width: 18,
                                       height: 18,
@@ -109,7 +109,23 @@ class _HeaderWidgetState extends State<HeaderWidget>
                         },
                       )
                     ])),
-            const LoginButton(),
+            controller.user.value == null
+                ? FButton.icon(
+                    onPress: () {
+                      context.go('/login');
+                    },
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text("to-login-page".i18n()),
+                        const SizedBox(
+                          width: 10,
+                        ),
+                        FIcon(FAssets.icons.logIn)
+                      ],
+                    ),
+                  )
+                : const LoginButton()
           ],
           title: Row(
             mainAxisAlignment: MainAxisAlignment.start,

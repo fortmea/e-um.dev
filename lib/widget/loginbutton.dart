@@ -31,6 +31,7 @@ class _LoginButtonState extends State<LoginButton> {
                       ),
               onPress: () {
                 controller.supabase.auth.signInWithOAuth(
+                  redirectTo: Uri.base.toString(),
                   OAuthProvider.github,
                   authScreenLaunchMode: kIsWeb
                       ? LaunchMode.platformDefault
@@ -93,7 +94,8 @@ class _LoginButtonState extends State<LoginButton> {
                   width: 10,
                 ),
                 !isMobile(context.width)
-                    ? Text(controller.user.value?.userMetadata?['preferred_username'])
+                    ? Text(controller
+                        .user.value?.userMetadata?['preferred_username'])
                     : Container(),
                 !isMobile(context.width)
                     ? const SizedBox(

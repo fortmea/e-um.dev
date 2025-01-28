@@ -1,4 +1,4 @@
-import 'package:flutter/foundation.dart';
+import 'package:eum.dev/widget/loginbutton.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:forui/forui.dart';
@@ -6,10 +6,9 @@ import 'package:get/get.dart';
 import 'package:eum.dev/controller/authcontroller.dart';
 import 'package:eum.dev/controller/localecontroller.dart';
 import 'package:eum.dev/util/responsive.dart';
-import 'package:eum.dev/widget/authwidget.dart';
 import 'package:eum.dev/widget/header.dart';
 import 'package:localization/localization.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class RegisterPage extends StatefulWidget {
   const RegisterPage({super.key});
@@ -19,10 +18,10 @@ class RegisterPage extends StatefulWidget {
 }
 
 class _RegisterPageState extends State<RegisterPage> {
-  GlobalKey<FormState> loginFormKey = GlobalKey<FormState>();
-  GlobalKey<FormState> registerFormKey = GlobalKey<FormState>();
-  final TextEditingController emailController = TextEditingController();
-  final TextEditingController passwordController = TextEditingController();
+//  GlobalKey<FormState> loginFormKey = GlobalKey<FormState>();
+  // GlobalKey<FormState> registerFormKey = GlobalKey<FormState>();
+  //final TextEditingController emailController = TextEditingController();
+  // final TextEditingController passwordController = TextEditingController();
   AuthController controller = Get.find<AuthController>();
   LocaleController localeController = Get.find();
 
@@ -37,13 +36,13 @@ class _RegisterPageState extends State<RegisterPage> {
     localeController.currentTitle = getTitle();
   }
 
-  @override
+  /*@override
   void dispose() {
     emailController.dispose();
     passwordController.dispose();
     super.dispose();
   }
-
+*/
   String getTitle() {
     return (register ? 'register' : 'login').i18n();
   }
@@ -52,35 +51,63 @@ class _RegisterPageState extends State<RegisterPage> {
   Widget build(BuildContext context) {
     localeController.currentTitle = getTitle();
     return FScaffold(
-        //header: HeaderWidget(title: getTitle()),
+        footer: Padding(
+            padding: EdgeInsets.symmetric(
+                horizontal:
+                    responsivePadding(MediaQuery.sizeOf(context).width)),
+            child: Column(children: [
+              Text("agree-to-terms".i18n()),
+              const SizedBox(
+                height: 8,
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  FButton.icon(
+                      onPress: () {
+                        //print("${Uri.base}pages/politica.html");
+                        launchUrl(Uri.parse("${Uri.base}pages/politica.html"));
+                      },
+                      child: Row(children: [
+                        Text("privacy-policy".i18n()),
+                        const SizedBox(
+                          width: 8,
+                        ),
+                        FIcon(FAssets.icons.externalLink)
+                      ])),
+                  const SizedBox(
+                    width: 8,
+                  ),
+                  FButton.icon(
+                      onPress: () {
+                        launchUrl(Uri.parse("${Uri.base}pages/termos.html"));
+                      },
+                      child: Row(children: [
+                        Text("terms-use".i18n()),
+                        const SizedBox(
+                          width: 8,
+                        ),
+                        FIcon(FAssets.icons.externalLink)
+                      ])),
+                ],
+              ),
+              const SizedBox(
+                height: 8,
+              ),
+            ])),
+        header: HeaderWidget(title: getTitle()),
         content: Padding(
             padding: EdgeInsets.symmetric(
                 vertical: responsivePadding(MediaQuery.sizeOf(context).height),
                 horizontal:
                     responsivePadding(MediaQuery.sizeOf(context).width)),
-            child: SingleChildScrollView(
+            child: const SingleChildScrollView(
                 child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                FButton(
-                  onPress: () {
-                    controller.deleteAccount();
-                  },
-                  label: const Text("Apagar conta"),
-                ),
-                FButton(
-                    onPress: () {
-                      controller.supabase.auth.signInWithOAuth(
-                        OAuthProvider.github,
-                        authScreenLaunchMode: kIsWeb
-                            ? LaunchMode.platformDefault
-                            : LaunchMode
-                                .externalApplication, // Launch the auth screen in a new webview on mobile.
-                      );
-                    },
-                    label: Text("GIT")),
-                Obx(
+                LoginButton(),
+                /* Obx(
                   () {
                     return Column(children: [
                       controller.message.value != null
@@ -165,7 +192,7 @@ class _RegisterPageState extends State<RegisterPage> {
                               ),
                             )
                           ])))
-                    ]),
+                    ]),*/
               ],
             ))));
   }

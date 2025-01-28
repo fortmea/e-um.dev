@@ -8,6 +8,7 @@
     "page-not-found": "Não encontramos a página que está procurando.",
     "theme": "Tema",
     "auth-button": "Login com Github",
+    "to-login-page": "Entrar",
     "language": "Idioma",
     "portuguese": "Português",
     "english": "Inglês",
@@ -53,7 +54,7 @@
     "error-registering": "Erro ao registrar seu subdomínio. Por favor, verifique o formulário para erros. Se os problemas persistirem, verifique as perguntas ou página de ajuda.",
     "error-deleting": "Erro ao deletar seu subdomínio. Por favor tente novamente mais tarde. Se o problema persistir, entre em contato pela seção de ajuda.",
     "register-domain": "Registre seu subdomínio",
-    "domains-served": "%s Subdomínios registrados gratuitamente.",
+    "domains-served": "%s %b{Subdomínios registrados:Subdomínio registrado}  gratuitamente.",
     "claim-now": "Faça login para obter o seu subdomínio grátis.",
     "free-domains": "Subdomínios grátis para todos.",
     "delete-account": "Deletar conta?",
@@ -71,6 +72,7 @@
     "a-cname": "A ou CNAME?",
     "a-cname-description": "Um registro A é um registro que aponta para um endereço IP. Ele é usado para consultas de DNS e é o tipo mais comum de registro DNS.\nUm registro CNAME é um registro que aponta para outro nome de subdomínio. Ele é usado para aliasing e frequentemente utilizado para apontar para um bucket S3, uma distribuição do CloudFront ou outro serviço.",
     "copyright-dmca-claims": "Copyright/DMCA/Reclamações em geral",
-  "copyright-dmca-claims-description": "Envie um e-mail para este endereço para reivindicar a propriedade de conteúdo hospedado em subdomínios registrados por meio deste serviço:\n eu@jao.su"
+    "copyright-dmca-claims-description": "Envie um e-mail para este endereço para reivindicar a propriedade de conteúdo hospedado em subdomínios registrados por meio deste serviço:\n eu@jao.su",
+    "agree-to-terms": "Ao utilizar esse serviço você concorda com os termos de política e privacidade e de uso que podem ser visualizados abaixo."
 
 }

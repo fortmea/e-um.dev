@@ -211,14 +211,14 @@ export async function createDomain(req: Request): Promise<Response> {
           });
         }
       } else if (req.method === "DELETE") {
-        console.log(supabaseClient);
-        deleteDomain(
+        //console.log(supabaseClient);
+        return await deleteDomain(
           cloudflareId,
           supabaseClient,
           AUTH_EMAIL,
           AUTH_KEY,
           ZONE_ID,
-        );
+        ) || new Response("error", { status: 500 });
       }
     }
     return new Response("Error. Record not found or malformed request", {

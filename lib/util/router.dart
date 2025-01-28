@@ -1,9 +1,7 @@
-import 'package:get/get.dart';
+import 'package:eum.dev/pages/auth.dart';
 import 'package:go_router/go_router.dart';
 import 'package:eum.dev/pages/404.dart';
 import 'package:eum.dev/pages/home.dart';
-import 'package:eum.dev/pages/note.dart';
-import 'package:eum.dev/pages/auth.dart';
 
 final router = GoRouter(
     errorBuilder: (context, state) {
@@ -20,9 +18,9 @@ final router = GoRouter(
           return NotePage(noteId: state.pathParameters['noteId'] ?? "");
         },
       ),*/
-      GoRoute(path: '/auth', builder: (context, state) => const RegisterPage()),
+       GoRoute(path: '/login', builder: (context, state) => const RegisterPage()),
     ]);
-
+/*
 final getPages = [
   GetPage(
     name: '/',
@@ -35,8 +33,9 @@ final getPages = [
       return NotePage(noteId: noteId);
     },
   ),*/
-  GetPage(
+  /* GetPage(
     name: '/auth',
     page: () => const RegisterPage(),
-  ),
+  ),*/
 ];
+*/

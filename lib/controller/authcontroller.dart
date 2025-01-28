@@ -178,6 +178,7 @@ class AuthController extends GetxController {
   authEventSubscriber(
       Function(AuthChangeEvent event, Session? session) eventHandler) {
     supabase.auth.onAuthStateChange.listen((data) {
+      
       final AuthChangeEvent event = data.event;
       final Session? session = data.session;
       eventHandler(event, session);

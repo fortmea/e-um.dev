@@ -7,6 +7,7 @@ import 'package:extended_text/extended_text.dart';
 import 'package:flutter/material.dart';
 import 'package:forui/forui.dart';
 import 'package:get/get.dart';
+import 'package:go_router/go_router.dart';
 import 'package:localization/localization.dart';
 
 class WelcomeWidget extends StatefulWidget {
@@ -79,10 +80,14 @@ class _WelcomeWidgetState extends State<WelcomeWidget>
                                             fontSize: mobile ? 28 : 56),
                                         gradientConfig: gradientConfig,
                                         TextSpan(
-                                          text: "domains-served".i18n([
+                                          text: 'domains-served'.i18n([
                                             controller.counterController
                                                 .currentValue.value
-                                                .toString()
+                                                .toString(),
+                                          ], [
+                                            controller.counterController
+                                                    .currentValue.value >
+                                                1
                                           ]),
                                         ))))
                               ])),
@@ -100,9 +105,23 @@ class _WelcomeWidgetState extends State<WelcomeWidget>
             "claim-now".i18n(),
             style: const TextStyle(fontSize: 20),
           ),
-          const SizedBox(
+           SizedBox(
             width: 200,
-            child: LoginButton(),
+            child: FButton.icon(
+              onPress: () {
+                context.go('/login');
+              },
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text("to-login-page".i18n()),
+                  const SizedBox(
+                    width: 10,
+                  ),
+                  FIcon(FAssets.icons.logIn)
+                ],
+              ),
+            ),
           )
         ]))
       ]),

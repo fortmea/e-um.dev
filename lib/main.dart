@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:eum.dev/controller/recordcontroller.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -13,7 +11,6 @@ import 'package:eum.dev/controller/overlaycontroller.dart';
 import 'package:eum.dev/controller/themecontroller.dart';
 import 'package:eum.dev/helper/sharedpreferences.dart';
 import 'package:eum.dev/util/router.dart';
-import 'package:flutter_web_plugins/url_strategy.dart';
 import 'package:eum.dev/widget/animatedwidget.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:localization/localization.dart';
@@ -21,20 +18,23 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  usePathUrlStrategy();
-  await dotenv.load(fileName: "env/env.env");
+  //usePathUrlStrategy();
+  await dotenv.load(fileName: "${kDebugMode ? "" : "assets/"}env/env.env");
   await Supabase.initialize(
     url: dotenv.env["url"] ?? "",
     anonKey: (dotenv.env["key"] ?? ""),
   );
 
   final systemLocale = WidgetsBinding.instance.platformDispatcher.locale;
+  final prefs = SharedPrefsHelper();
+  await prefs.init();
+  Get.put(prefs);
   Get.put(FThemes.zinc.dark);
   Get.put(router);
   Get.put(OverlayController());
   Get.put(RecordController());
   Get.put(LocaleController(currentLocale: systemLocale.obs));
-  Get.put(SharedPrefsHelper());
+
   runApp(const MyApp());
 }
 
@@ -58,9 +58,13 @@ class _MyAppState extends State<MyApp> {
     routerObj = Get.find<GoRouter>();
     localeController = Get.find<LocaleController>();
     overlayController = Get.find<OverlayController>();
-
+    //print(Uri.base);
     LocalJsonLocalization.delegate.directories = [
-      kIsWeb ? "/i18n" : "assets/i18n"
+      kIsWeb
+          ? kDebugMode
+              ? "i18n"
+              : "assets/i18n"
+          : "assets/i18n"
     ];
 
     // Configurar controlador de autenticação e evento
@@ -70,12 +74,12 @@ class _MyAppState extends State<MyApp> {
 
   void authEventHandler(AuthChangeEvent event, Session? session) {
     overlayController.toggleOverlay();
-    print("LOL");
-    print("Evento $event" );
+    //print("$event ------------------------");
     switch (event) {
       case AuthChangeEvent.initialSession:
         break;
       case AuthChangeEvent.signedIn:
+        //print('signed');
         routerObj.go('/');
         break;
       case AuthChangeEvent.signedOut:
@@ -88,10 +92,10 @@ class _MyAppState extends State<MyApp> {
         // handle token refreshed
         break;
       case AuthChangeEvent.userUpdated:
-        print("Usuário atualizado");
+        //print("Usuário atualizado");
         break;
       case AuthChangeEvent.userDeleted:
-        print("Usuário apagado");
+        //print("Usuário apagado");
         break;
       case AuthChangeEvent.mfaChallengeVerified:
         // handle mfa challenge verified
