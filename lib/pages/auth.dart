@@ -66,7 +66,8 @@ class _RegisterPageState extends State<RegisterPage> {
                   FButton.icon(
                       onPress: () {
                         //print("${Uri.base}pages/politica.html");
-                        launchUrl(Uri.parse("${Uri.base}pages/politica.html"));
+                        launchUrl(
+                            Uri.parse("/pages/politica.html"));
                       },
                       child: Row(children: [
                         Text("privacy-policy".i18n()),
@@ -80,7 +81,8 @@ class _RegisterPageState extends State<RegisterPage> {
                   ),
                   FButton.icon(
                       onPress: () {
-                        launchUrl(Uri.parse("${Uri.base}pages/termos.html"));
+                        launchUrl(
+                            Uri.parse("/pages/termos.html"));
                       },
                       child: Row(children: [
                         Text("terms-use".i18n()),
